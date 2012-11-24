@@ -22,7 +22,7 @@ else {
 
 error_reporting(0);
 
-echo "success <a href=\"login.php\">Back to the form</a>";
+echo "success <a href=\"form.php\">Back to the form</a>";
 
 session_destroy();
 
