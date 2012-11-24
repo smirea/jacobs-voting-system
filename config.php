@@ -1,7 +1,7 @@
 <?php
   define( 'DB_USER', 'jPerson' );
   define( 'DB_PASS', 'jacobsRulz' );
-  define( 'DB_NAME', 'RoomAllocation' );
+  define( 'DB_NAME', 'VotingSystem' );
   
   dbConnect( DB_USER, DB_PASS, DB_NAME );
   
