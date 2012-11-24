@@ -4,8 +4,8 @@ $port = 389;
 $base_dn = "DC=jacobs,DC=jacobs-university,DC=de";
 $user_dn = "OU=active,OU=Users,OU=CampusNet,DC=jacobs,DC=jacobs-university,DC=de";
 
-$username = mysql_escape_string($_POST["username"]);
-$password = mysql_escape_string($_POST["password"]);
+$username = mysql_escape_string($_REQUEST["username"]);
+$password = mysql_escape_string($_REQUEST["password"]);
 
 if (($username=="") || ($password==""))
     $success = false;
