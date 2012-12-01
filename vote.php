@@ -2,10 +2,15 @@
 
   require_once 'config.php';
   require_once 'utils.php';
+  require_once 'can_vote.php';
   
   $pid =  $_GET["id"];
   $options = $_GET["options"];
-  $uid = rand();
+  $uid = 5;
+
+if (!vote_is_valid($uid,$pid,$options)) {
+die("Already voted");
+}
 
 $query = "INSERT INTO votes (user_id, poll_id) VALUES('$uid','$pid')";
   if (!mysql_query($query)) {
