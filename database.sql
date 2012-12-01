@@ -1,9 +1,10 @@
 
---create database VotingSystem;
+/**
+create database VotingSystem;
 
---create user jPerson@'localhost' identified by 'jacobsRulz';
---grant all privileges on VotingSystem.* to 'jPerson'@'localhost' IDENTIFIED BY 'jacobsRulz';
-
+create user jPerson@'localhost' identified by 'jacobsRulz';
+grant all privileges on VotingSystem.* to 'jPerson'@'localhost' IDENTIFIED BY 'jacobsRulz';
+**/
 
 DROP TABLE IF EXISTS `poll`;
 CREATE TABLE `poll`(
