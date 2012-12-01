@@ -9,14 +9,16 @@ grant all privileges on VotingSystem.* to 'jPerson'@'localhost' IDENTIFIED BY 'j
 DROP TABLE IF EXISTS `poll`;
 CREATE TABLE `poll`(
   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `type` VARCHAR(64) NOT NULL
+  `type` VARCHAR(64) NOT NULL,
+  `opening_time` INT NOT NULL,
+  `closing_time` INT NOT NULL
 ) ENGINE = MYISAM ;
 
 DROP TABLE IF EXISTS `options`;
 CREATE TABLE `options`(
   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `poll_id` INT NOT NULL,
-  `option` VARCHAR(128) NOT NULL,
+  `option_name` VARCHAR(128) NOT NULL,
   `value` INT NOT NULL DEFAULT '0'
 ) ENGINE = MYISAM ;
 
