@@ -14,3 +14,21 @@ CREATE TABLE `Elections`(
   INDEX `label_index` (label),
   INDEX `vote_index` (vote)
 ) ENGINE = MYISAM ;
+
+CREATE TABLE `poll`(
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `type` VARCHAR(64) NOT NULL
+) ENGINE = MYISAM ;
+
+CREATE TABLE `options`(
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `poll_id` INT NOT NULL,
+  `option` VARCHAR(128) NOT NULL
+) ENGINE = MYISAM ;
+
+CREATE TABLE `votes`(
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `poll_id` INT NOT NULL
+) ENGINE = MYISAM ;
+
