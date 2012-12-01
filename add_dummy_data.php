@@ -1,10 +1,5 @@
 <?php
 
-  /*
-    create user jPerson@'localhost' identified by 'jacobsRulz';
-    grant all privileges on *.* to 'jPerson'@'localhost' IDENTIFIED BY 'jacobsRulz';
-  */
-
   require_once 'config.php';
   require_once 'utils.php';
 
