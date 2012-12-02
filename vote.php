@@ -6,7 +6,7 @@
   
   $pid =  $_GET["id"];
   $options = $_GET["options"];
-  $uid = 5;
+  $uid = rand();//$session['user_id'];
 
 if (!vote_is_valid($uid,$pid,$options)) {
 die("Already voted");
@@ -32,7 +32,7 @@ $value = mysql_fetch_assoc($value);
 
 $result = $value['value'] + 1;
 
-echo "Setting vote for " . $op . " as ". $result;
+echo "Setting vote for " . $op . " as ". $result . "<br />";
 
   $query = "UPDATE options SET value='$result' WHERE poll_id='$pid'"
   ." AND option_name = '$op'";
