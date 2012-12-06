@@ -7,8 +7,8 @@
       $this->table_name = $table_name;
     }
 
-    public sql ($query) {
-      // bla logic
+    public function sql ($query) {
+      
     }
   }
 
