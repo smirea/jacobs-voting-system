@@ -7,7 +7,6 @@
       $this->table_name = $table_name;
     }
 
-
     public function select ($columns, $query) {
       return mysql_query("SELECT $columns FROM ".$this->table_name." $query");
     }
