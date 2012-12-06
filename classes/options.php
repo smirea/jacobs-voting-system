@@ -1,7 +1,7 @@
 <?
   require_once 'config.php';
   require_once 'utils.php';
-
+  
   class optionsModel {
 
   	public $table_name;
@@ -31,4 +31,6 @@
     }
 
   }
+
+  $option = new optionsModel("options");
 ?>
