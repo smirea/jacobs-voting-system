@@ -6,6 +6,9 @@
   require_once 'classes/votes.php';
   require_once 'classes/options.php';
 
+  $votes = new votesModel("votes");
+  $option = new optionsModel("options");
+
 
   $pid =  $_GET["id"];
   $options = $_GET["options"];

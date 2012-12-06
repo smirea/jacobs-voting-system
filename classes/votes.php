@@ -14,6 +14,5 @@
   		return mysql_query("INSERT INTO `".$this->table_name."` (user_id, poll_id) VALUES ('$user_id','$poll_id');");
   	}
   }
-
-  $votes = new votesModel("votes");
+  
 ?>
