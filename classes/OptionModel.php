@@ -6,15 +6,16 @@
   
   class OptionModel extends Model {
 
-  	public $table_name;
+    public $table_name;
 
-  	 function __construct($table_name) {
+     function __construct($table_name) {
       parent::__construct($table_name);
     }
 
-  	public function add_option($poll_id, $option_name, $value) {
-  		return mysql_query("INSERT INTO `".$this->table_name."` (`poll_id`, `option_name`, `value`) VALUES ('".$poll_id."', '".$option_name."', '".$value."'); ");
-  	}
+    
+    public function add_option($poll_id, $option_name, $value) {
+      return mysql_query("INSERT INTO `".$this->table_name."` (`poll_id`, `option_name`, `value`) VALUES ('".$poll_id."', '".$option_name."', '".$value."'); ");
+    }
 
     // To get results of the vote -.D
     public function option_value($poll_id, $option_name) {
@@ -25,7 +26,7 @@
     } 
 
     // To increment the vote by one -.D
-    public function incrementValue($poll_id, $option_name) {
+    public function increment_value($poll_id, $option_name) {
       
       $newValue = $this->option_value($poll_id, $option_name) + 1;
 
@@ -33,6 +34,4 @@
     }
 
   }
-
-  $option = new optionsModel("options");
 ?>

@@ -6,6 +6,8 @@
   require_once 'classes/votes.php';
   require_once 'classes/options.php';
 
+  $voteModel = new VoteModel('votes');
+  $optionModel = new OptionModel('options');
 
   $pid =  $_GET["id"];
   $options = $_GET["options"];
@@ -15,11 +17,11 @@
     die("Vote invalid.");
   }
 
-  $votes->add_vote($uid,$pid);
+  $voteModel->add_vote($uid,$pid);
 
   foreach ($options as $op) {
     echo "Voted for " . $op . "\n";
-    $option->incrementValue($pid,$op);
+    $optionModel->increment_value($pid,$op);
   }
 
 
