@@ -20,7 +20,7 @@
       $this->table_name = $table_name;
       $this->poll_model = new PollModel('$poll');
     }
-    
+
     /**
      * Inserts a vote into the table
      * @param {Int} $poll_id the id of the poll
@@ -32,7 +32,7 @@
     }
 
     protected function has_voted($user_id, $poll_id){
-      $is_in_there = ($this->poll_model)->has_user_voted($user_id,$poll_id);
+      $is_in_there = $this->poll_model->has_user_voted($user_id,$poll_id);
       /*sql_to_array(mysql_query("SELECT * FROM votes 
         WHERE user_id = '$user_id' AND poll_id = '$poll_id'"));*/
 
@@ -44,7 +44,7 @@
 
     protected function vote_in_time($poll_id){
 
-      $start_time = ($this->poll_model)->opening_time($poll_id);
+      $start_time = $this->poll_model->opening_time($poll_id);
       
       if (!$start_time) {
         die(mysql_error());
@@ -52,7 +52,7 @@
 
       $start_time = mysql_fetch_assoc($start_time);
 
-      $end_time = ($this->poll_model)->closing_time($poll_id);
+      $end_time = $this->poll_model->closing_time($poll_id);
       
       if (!$end_time) {
         die(mysql_error());
