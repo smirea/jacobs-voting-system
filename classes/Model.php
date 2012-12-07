@@ -17,7 +17,7 @@
      * @param {String} $query the select query string to run
      * @return {MySQL}
      */
-    public function select ($columns, $query) {
+    protected function select ($columns, $query) {
       return mysql_query("SELECT $columns FROM ".$this->table_name." $query");
     }
 
@@ -26,7 +26,7 @@
      * @param {String} $query the insert query string to run
      * @return {Bool}
      */
-    public function insert ($query) {
+    protected function insert ($query) {
       return mysql_query("INSERT INTO ".$this->table_name." $query");
     }
 
@@ -35,7 +35,7 @@
      * @param {String} $query the update query string to run
      * @return {Bool}
      */
-    public function update ($query) {
+    protected function update ($query) {
       return mysql_query("UPDATE ".$this->table_name." $query");
     }
 
@@ -44,7 +44,7 @@
      * @param {String} $query the delete query string to run
      * @return {Bool}
      */
-    public function delete ($query) {
+    protected function delete ($query) {
       return mysql_query("DELETE FROM ".$this->table_name." $query");
     }
 
@@ -53,7 +53,7 @@
      * love Stefan ^.^
      * @return {Bool}
      */
-    public function drop () {
+    protected function drop () {
       return mysql_query("DROP ".$this->table_name);
     }
 
@@ -61,8 +61,15 @@
      * Describe the structure of the 
      * @return {MySQL}
      */
-    public function describe () {
+    protected function describe () {
       return mysql_query("DESCRIBE ".$this->table_name);
+    }
+
+    /**
+     * @return {String}
+     */
+    public function get_table_name () {
+      return $this->table_name;
     }
   }
 
