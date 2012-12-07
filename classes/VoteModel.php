@@ -7,18 +7,16 @@
   require_once 'classes/PollModel.php';
 
 
-  class VoteModel {
+  class VoteModel extends Model{
 
-    public $table_name;
     private $poll_model;
-
     /**
      * Constructor for the Model
      * @param {String} $table_name the name of the table
      */
     function __construct($table_name) {
-      $this->table_name = $table_name;
-      $this->poll_model = new PollModel('$poll');
+      parent::__construct($table_name);
+      $this->poll_model = new PollModel('poll');
     }
 
     /**
@@ -28,23 +26,25 @@
      * @return {Bool}
      */
     public function add_vote($poll_id, $user_id) {
-      return mysql_query("INSERT INTO `".$this->table_name."` (user_id, poll_id) VALUES ('$user_id','$poll_id');");
+
+      return $this->insert("(user_id, poll_id) VALUES ('$user_id','$poll_id')");
     }
 
     protected function has_voted($user_id, $poll_id){
-      $is_in_there = $this->poll_model->has_user_voted($user_id,$poll_id);
-      /*sql_to_array(mysql_query("SELECT * FROM votes 
-        WHERE user_id = '$user_id' AND poll_id = '$poll_id'"));*/
 
-      if(sizeof($is_in_there)>0){
+      $is_in_there = mysql_num_rows($this->select('*',"WHERE user_id = '$user_id' AND poll_id = '$poll_id'"));
+
+      if($is_in_there>0){
         return true;
       }
+
       return false;
     }
 
     protected function vote_in_time($poll_id){
 
-      $start_time = $this->poll_model->opening_time($poll_id);
+      $start_time = $this->poll_model->select('opening_time',"WHERE id='$poll_id'");
+
       
       if (!$start_time) {
         die(mysql_error());
@@ -52,7 +52,7 @@
 
       $start_time = mysql_fetch_assoc($start_time);
 
-      $end_time = $this->poll_model->closing_time($poll_id);
+      $end_time = $this->poll_model->select('closing_time',"WHERE id='$poll_id'");
       
       if (!$end_time) {
         die(mysql_error());
