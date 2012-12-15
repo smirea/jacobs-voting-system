@@ -50,8 +50,13 @@
 
     public function return_all_options($poll_id) {
 
-      return mysql_query("SELECT option_name from options WHERE poll_id='$poll_id';");
-    
+      $result = array();
+      $array = sql_to_array(mysql_query("SELECT option_name from ".$this->table_name." WHERE poll_id='$poll_id';"));
+
+      foreach ($array as $a) {
+        $result[]=$a['option_name'];  
+      }
+      return $result;
     }
 
   }
