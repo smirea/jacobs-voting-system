@@ -7,6 +7,6 @@
 
   $model = new Model('Elections');
 
-  v_export(sql_to_array($model->select('*', "where label='A'")));
+  // v_export(sql_to_array($model->select('*', "where label='A'")));
 
 ?>
