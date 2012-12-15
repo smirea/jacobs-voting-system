@@ -2,6 +2,7 @@
 
   class Model {
     protected $table_name;
+    public $queries = array();
 
     /**
      * Model constructor
@@ -18,7 +19,7 @@
      * @return {MySQL}
      */
     protected function select ($columns, $query) {
-      return mysql_query("SELECT $columns FROM ".$this->table_name." $query");
+      return $this->query("SELECT $columns FROM ".$this->table_name." $query");
     }
 
     /**
@@ -27,7 +28,7 @@
      * @return {Bool}
      */
     protected function insert ($query) {
-      return mysql_query("INSERT INTO ".$this->table_name." $query");
+      return $this->query("INSERT INTO ".$this->table_name." $query");
     }
 
     /**
@@ -36,7 +37,7 @@
      * @return {Bool}
      */
     protected function update ($query) {
-      return mysql_query("UPDATE ".$this->table_name." $query");
+      return $this->query("UPDATE ".$this->table_name." $query");
     }
 
     /**
@@ -45,7 +46,7 @@
      * @return {Bool}
      */
     protected function delete ($query) {
-      return mysql_query("DELETE FROM ".$this->table_name." $query");
+      return $this->query("DELETE FROM ".$this->table_name." $query");
     }
 
     /**
@@ -54,7 +55,7 @@
      * @return {Bool}
      */
     protected function drop () {
-      return mysql_query("DROP ".$this->table_name);
+      return $this->query("DROP ".$this->table_name);
     }
 
     /**
@@ -62,7 +63,16 @@
      * @return {MySQL}
      */
     public function describe () {
-      return mysql_query("DESCRIBE ".$this->table_name);
+      return $this->query("DESCRIBE ".$this->table_name);
+    }
+
+    /**
+     * Generic wrapper for the mysql_query
+     * @param {String} $query any generic query
+     */
+    private function query ($query) {
+      $this->queries[] = $query;
+      return mysql_query($query);
     }
 
     /**
@@ -71,6 +81,7 @@
     public function get_table_name () {
       return $this->table_name;
     }
+
   }
 
 ?>
