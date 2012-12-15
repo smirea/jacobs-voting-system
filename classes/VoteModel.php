@@ -68,11 +68,11 @@
 
     }
 
-    protected function vote_is_valid($user_id, $poll_id, $votes){
-      if(has_voted($user_id, $poll_id)){
+    public function vote_is_valid($user_id, $poll_id, $votes){
+      if($this->has_voted($user_id, $poll_id)){
         return false;
       }
-      if(!vote_in_time($poll_id)){
+      if(!$this->vote_in_time($poll_id)){
         return false;
       }
       return true;
