@@ -13,7 +13,7 @@
   $uid = rand(); //$session['user_id'];
 
   if (!$voteModel->vote_is_valid($uid,$pid,$options)) {
-    die("Vote invalid.");
+    output_error("Vote invalid");
   }
 
   $voteModel->add_vote($pid,$uid);
