@@ -16,6 +16,8 @@
     output_error("Vote invalid");
   }
 
+ //v_export(sql_to_array($optionModel->return_all_options(5)));
+ //v_export(mysql_error());
   $voteModel->add_vote($pid,$uid);
 
   foreach ($options as $op) {

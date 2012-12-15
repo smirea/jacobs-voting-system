@@ -1,8 +1,8 @@
 <?
-  require_once '../config.php';
-  require_once '../utils.php';
+  require_once 'config.php';
+  require_once 'utils.php';
 
-  require_once '../classes/Model.php';
+  require_once 'classes/Model.php';
   
   class OptionModel extends Model {
 
@@ -50,7 +50,7 @@
 
     public function return_all_options($poll_id) {
 
-      return mysql_query("SELECT option_name from $table_name WHERE poll_id='$poll_id';");
+      return mysql_query("SELECT option_name from options WHERE poll_id='$poll_id';");
     
     }
 
