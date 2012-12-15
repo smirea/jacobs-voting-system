@@ -61,7 +61,7 @@
      * Describe the structure of the 
      * @return {MySQL}
      */
-    protected function describe () {
+    public function describe () {
       return mysql_query("DESCRIBE ".$this->table_name);
     }
 
