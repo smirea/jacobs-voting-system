@@ -1,21 +1,22 @@
-var DOMElement = Class.extend({
-  element: null,
-  init: function __construct (type) {
-    if (type === undefined) {
-      console.warn('[DOMElement] Must specify a type');
-      return null;
-    }
-    this.element = jq_element(type);
-  },
-  toString: function toString() {
-    return this.element;
+var JQueryClass = Class.extend($.fn);
+
+var JQueryElement = JQueryClass.extend({
+  selector: '',
+  jquery: $.fn.jquery,
+  length: 0,
+  context: undefined,
+  init: function init (type) {
+    if(!(this instanceof JQueryElement)) return new JQueryElement(type);
+    this[0] = document.createElement(type);
+    this.length = 1;
+    this.data('instance', this);
   }
 });
 
-var Poll = DOMElement.extend({
+var Poll = JQueryElement.extend({
   structure: null,
   init: function __construct (_options) {
-    this._super('form');
+    var that = this;
     var options = $.extend({
       id: null,
       url: null,
@@ -27,43 +28,53 @@ var Poll = DOMElement.extend({
 
     var key;
 
-    this.structure = {
-      wrapper: this.element,
+    that._super('form');
+
+    that.structure = {
       title: options.title ? jq_element('h3').html(options.title) : null,
       subtitle: options.subtitle ? jq_element('h4').html(options.subtitle) : null,
       id: options.id ? jq_element('input').attr({name: 'id', type: 'hidden'}).val(options.id) : null,
       poll: jq_element('table'),
-      submit: jq_element('input').attr({type:'submit', value:'Vote'})
+      fields: options.fields,
+      submit: jq_element('input').attr({type:'submit', value:'Vote'}),
+      revote: jq_element('input').attr({type:'reset', value:'Re-Vote :)'}),
     };
 
     for (key in options.fields) {
-      options.fields[key] = this.parse_input(key, options.fields[key]);
+      that.structure.fields[key] = that.parse_input(key, that.structure.fields[key]);
+      that.structure.fields[key].addClass('poll-option');
     }
 
-    for (key in options.fields) {
-      if (!(options.fields[key] instanceof Input)) {
-        console.warn('[Poll] Not an instance of Input', options.fields[key]);
+    for (key in that.structure.fields) {
+      if (!(that.structure.fields[key] instanceof Input)) {
+        console.warn('[Poll] Not an instance of Input', that.structure.fields[key]);
         continue;
       }
-      this.structure.poll.append(
+      that.structure.poll.append(
         jq_element('tr').append(
           jq_element('th').html(key),
-          jq_element('td').append(options.fields[key].element)
+          jq_element('td').
+            attr('field-key', key).
+            append(that.structure.fields[key])
         )
       );
     }
 
-    this.structure.wrapper.
-      attr({
+    that.structure.revote.
+      css('margin-left', 15).
+      on('click.show_poll', function on_click_show_poll(){ that.show_poll(); });
+
+    that.attr({
         action: options.url,
         method: options.method,
         'class': 'poll'
       }).append(
-        this.structure.title,
-        this.structure.subtitle,
-        this.structure.id,
-        this.structure.poll,
-        this.structure.submit
+        that.structure.title,
+        that.structure.subtitle,
+        that.structure.id,
+        that.structure.poll,
+        that.structure.submit,
+        that.structure.revote
       );
   },
   parse_input: function parse_input (label, data) {
@@ -85,14 +96,45 @@ var Poll = DOMElement.extend({
       }
     }
     return null;
+  },
+  show_poll: function show_poll () {
+    for (var key in this.structure.fields) {
+      $(this.structure.fields[key]).parent().find('.progress').remove();
+      this.structure.fields[key].show();
+    }
+  },
+  show_results: function show_results (result_map) {
+    var key;
+    var total = 0;
+    $.map(result_map, function(value, key) { total += value; });
+    for (key in this.structure.fields) {
+      var value = result_map[this.structure.fields[key].attr('name')] || 0;
+      $(this.structure.fields[key]).
+        parent().
+        find('.progress').
+        remove().
+        end().
+        append(this.result_bar(value, total));
+      this.structure.fields[key].hide();
+    }
+  },
+  result_bar: function result_bar (value, total) {
+    return jq_element('div').
+              addClass('progress progress-striped active').
+              css('min-width', 400).
+              append(
+                jq_element('div').
+                  addClass('bar').
+                  css('width', (Math.floor(value/total*100)) + '%')
+              )
   }
 });
 
-var Input = DOMElement.extend({
+var Input = JQueryElement.extend({
   init: function __construct (name, attributes) {
     this._super('input');
     attributes = attributes || {};
-    this.element.attr({
+    this.attr({
       name: name
     }).attr(attributes);
   },
@@ -100,7 +142,7 @@ var Input = DOMElement.extend({
     if (new_value === undefined) {
       return this.value;
     }
-    this.element.val(new_value);
+    this.val(new_value);
     return this;
   }
 });
@@ -113,10 +155,10 @@ var CheckboxInput = Input.extend({
   },
   val: function val (new_value) {
     if (new_value === undefined) {
-      return !!this.element.attr('checked');
+      return !!this.attr('checked');
     }
     var val = !!new_value;
-    this.element.attr({
+    this.attr({
       checked: val,
       value: val
     });
@@ -127,13 +169,13 @@ var CheckboxInput = Input.extend({
 var RadioInput = CheckboxInput.extend({
   init: function __construct (name, attributes) {
     this._super(name, attributes);
-    this.element.attr('type', 'radio');
+    this.attr('type', 'radio');
   },
   val: function val (new_value) {
     if (new_value === undefined) {
-      return !!this.element.attr('checked');
+      return !!this.attr('checked');
     }
-    this.element.attr({
+    this.attr({
       checked: !!new_value
     });
   }
