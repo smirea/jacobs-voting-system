@@ -1,4 +1,3 @@
-
 <html>
   <head>
     <style type="text/css"></style>
@@ -6,9 +5,11 @@
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/less.min.js"></script>
-    <script type="text/javascript" src="js/classical-m4.js"></script>
+    <script type="text/javascript" src="js/inheritance.js"></script>
     <script type="text/javascript" src="js/classes.js"></script>
     <script type="text/javascript">
+      var polls = {};
+
       $(function () {
 
         /**
@@ -55,7 +56,16 @@
           }
         });
 
-        var drinkathon = new Poll({
+
+        $('body').on('click', '.poll input[type="reset"]', function () {
+          $(this).
+            parent().
+            find('.poll-option').
+            parent().
+            css('background', '#ffccca');
+        });
+
+        polls['drinkathon'] = new Poll({
           id: 6969,
           url: 'vote.php',
           title: 'Availability for IT Committee Drinkathon',
@@ -68,7 +78,7 @@
             '22.12.2012': 'checkbox'
           }
         });
-        drinkathon.structure.poll.find('input[type="checkbox"]').
+        polls['drinkathon'].structure.poll.find('input[type="checkbox"]').
           on('change.color', function on_change () {
             $(this).parent().css('background', !!$(this).attr('checked') ? 'lightgreen' : '#ffccca');
           }).trigger('change');
@@ -79,16 +89,16 @@
         for (var i=0; i<days.length; ++i) {
           end_of_the_world_fields[days[i]] = new RadioInput('options[day]', {value:days[i]});
         }
-        var armageddon = new Poll({
+        polls['armageddon'] = new Poll({
           id: 6900,
           url: 'vote.php',
           title: 'End of the World',
           subtitle: 'On which day do you think the end of the world will happen?',
           fields: end_of_the_world_fields
         });
-        armageddon.structure.poll.find('input[type="radio"]').
+        polls['armageddon'].structure.poll.find('input[type="radio"]').
           on('change.color', function on_change () {
-            armageddon.structure.poll.find('input[name="'+this.name+'"]').parent().css('background', '#ffccca');
+            polls['armageddon'].structure.poll.find('input[name="'+this.name+'"]').parent().css('background', '#ffccca');
             if ($(this).attr('checked')) {
               $(this).parent().css('background', 'lightgreen');
             }
@@ -96,18 +106,20 @@
 
 
         $('body').append(
-          drinkathon.element,
-          armageddon.element
+          polls['drinkathon'],
+          polls['armageddon']
         );
 
         $('form').on('submit.vote', function _on_vote (event) {
+          var form = $(this);
           event.preventDefault();
           $.ajax({
             type: "GET",
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function (response) {
-              console.log(response);
+              console.log('Reply:', response);
+              show_random_results(form.data('instance'));
             },
             error: function (xhr, ajaxOptions, thrownError) {
               console.warn('Form submit fail!');
@@ -117,6 +129,14 @@
         });
 
       });
+
+      function show_random_results (poll) {
+        var result = {};
+        for (var key in poll.structure.fields) {
+          result['options['+key+']'] = Math.floor(Math.random() * 100000);
+        }
+        poll.show_results(result);
+      }
 
       function jq_element (type) {
         return $(document.createElement(type));
