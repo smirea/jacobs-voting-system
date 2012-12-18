@@ -20,7 +20,7 @@ Class('DOMElement', {
 });
 
 Class('Poll', {
-  'private structure': null,
+  structure: null,
   '[constructor]': function __construct (_options) {
     uber('form');
     var options = $.extend({
@@ -36,7 +36,7 @@ Class('Poll', {
     structure = {
       wrapper: element,
       title: options.title ? jq_element('h3').html(options.title) : null,
-      subtitle: options.subtitle ? jq_element('h3').html(options.subtitle) : null,
+      subtitle: options.subtitle ? jq_element('h4').html(options.subtitle) : null,
       id: options.id ? jq_element('input').attr({name: 'id', type: 'hidden'}).val(options.id) : null,
       poll: jq_element('table'),
       submit: jq_element('input').attr({type:'submit', value:'Vote'})
@@ -53,8 +53,8 @@ Class('Poll', {
       }
       structure.poll.append(
         jq_element('tr').append(
-          jq_element('td').html(key),
-          options.fields[key].element
+          jq_element('th').html(key),
+          jq_element('td').append(options.fields[key].element)
         )
       );
     }
@@ -124,7 +124,7 @@ Class('CheckboxInput', {
     attributes.type = 'checkbox';
     uber(name, attributes);
     element.on('change', function on_change () {
-      this.value = !!$(this).attr('checked');
+      value = !!$(this).attr('checked');
     });
     value = !!attributes.checked;
   },
@@ -139,3 +139,16 @@ Class('CheckboxInput', {
     return !!element.attr('checked');
   }
 }, Input);
+
+Class('RadioInput', {
+  '[constructor]': function __construct (name, attributes) {
+    uber(name, attributes);
+    element.attr('type', 'radio');
+  },
+  'public set value': function set_value (new_value) {
+    var val = !!new_value;
+    element.attr({
+      checked: val
+    });
+  }
+}, CheckboxInput);
