@@ -1,28 +1,21 @@
-Class('DOMElement', {
-  'private element_': null,
-  '[constructor]': function __construct (type) {
+var DOMElement = Class.extend({
+  element: null,
+  init: function __construct (type) {
     if (type === undefined) {
       console.warn('[DOMElement] Must specify a type');
       return null;
     }
-    element_ = jq_element(type);
-  },
-  'public get element': function get_element () {
-    return element_;
-  },
-  'public set element': function set_element (new_element) {
-    console.warn('[DOMElement] Element immutable');
-    return null;
+    this.element = jq_element(type);
   },
   toString: function toString() {
-    return element;
+    return this.element;
   }
 });
 
-Class('Poll', {
+var Poll = DOMElement.extend({
   structure: null,
-  '[constructor]': function __construct (_options) {
-    uber('form');
+  init: function __construct (_options) {
+    this._super('form');
     var options = $.extend({
       id: null,
       url: null,
@@ -31,10 +24,11 @@ Class('Poll', {
       title: null,
       subtitle: null
     }, _options);
+
     var key;
 
-    structure = {
-      wrapper: element,
+    this.structure = {
+      wrapper: this.element,
       title: options.title ? jq_element('h3').html(options.title) : null,
       subtitle: options.subtitle ? jq_element('h4').html(options.subtitle) : null,
       id: options.id ? jq_element('input').attr({name: 'id', type: 'hidden'}).val(options.id) : null,
@@ -43,15 +37,15 @@ Class('Poll', {
     };
 
     for (key in options.fields) {
-      options.fields[key] = parse_input(key, options.fields[key]);
+      options.fields[key] = this.parse_input(key, options.fields[key]);
     }
 
     for (key in options.fields) {
-      if (!Input.hasInstance(options.fields[key])) {
+      if (!(options.fields[key] instanceof Input)) {
         console.warn('[Poll] Not an instance of Input', options.fields[key]);
         continue;
       }
-      structure.poll.append(
+      this.structure.poll.append(
         jq_element('tr').append(
           jq_element('th').html(key),
           jq_element('td').append(options.fields[key].element)
@@ -59,24 +53,24 @@ Class('Poll', {
       );
     }
 
-    structure.wrapper.
+    this.structure.wrapper.
       attr({
         action: options.url,
         method: options.method,
         'class': 'poll'
       }).append(
-        structure.title,
-        structure.subtitle,
-        structure.id,
-        structure.poll,
-        structure.submit
+        this.structure.title,
+        this.structure.subtitle,
+        this.structure.id,
+        this.structure.poll,
+        this.structure.submit
       );
   },
   parse_input: function parse_input (label, data) {
     if (!data) {
       return null;
     }
-    if (Input.hasInstance(data)) {
+    if (data instanceof Input) {
       return data;
     }
     if (data.constructor === Object) {
@@ -92,63 +86,55 @@ Class('Poll', {
     }
     return null;
   }
-}, DOMElement);
+});
 
-Class('Input', {
-  '[constructor]': function __construct (name, attributes) {
-    uber('input');
+var Input = DOMElement.extend({
+  init: function __construct (name, attributes) {
+    this._super('input');
     attributes = attributes || {};
-    element.attr({
+    this.element.attr({
       name: name
     }).attr(attributes);
   },
   val: function val (new_value) {
-    if (new_value !== undefined) {
-      this.value = new_value;
-      return this;
-    } else {
+    if (new_value === undefined) {
       return this.value;
     }
-  },
-  'public set value': function set_value (new_value) {
-    element.val(new_value);
-  },
-  'public get value': function get_value () {
-    return element.val();
+    this.element.val(new_value);
+    return this;
   }
-}, DOMElement);
+});
 
-Class('CheckboxInput', {
-  '[constructor]': function __construct (name, attributes) {
+var CheckboxInput = Input.extend({
+  init: function __construct (name, attributes) {
     attributes = attributes || {};
     attributes.type = 'checkbox';
-    uber(name, attributes);
-    element.on('change', function on_change () {
-      value = !!$(this).attr('checked');
-    });
-    value = !!attributes.checked;
+    this._super(name, attributes);
   },
-  'public set value': function set_value (new_value) {
+  val: function val (new_value) {
+    if (new_value === undefined) {
+      return !!this.element.attr('checked');
+    }
     var val = !!new_value;
-    element.attr({
+    this.element.attr({
       checked: val,
       value: val
     });
-  },
-  'public get value': function get_value () {
-    return !!element.attr('checked');
+    return this;
   }
-}, Input);
+});
 
-Class('RadioInput', {
-  '[constructor]': function __construct (name, attributes) {
-    uber(name, attributes);
-    element.attr('type', 'radio');
+var RadioInput = CheckboxInput.extend({
+  init: function __construct (name, attributes) {
+    this._super(name, attributes);
+    this.element.attr('type', 'radio');
   },
-  'public set value': function set_value (new_value) {
-    var val = !!new_value;
-    element.attr({
-      checked: val
+  val: function val (new_value) {
+    if (new_value === undefined) {
+      return !!this.element.attr('checked');
+    }
+    this.element.attr({
+      checked: !!new_value
     });
   }
-}, CheckboxInput);
+});
