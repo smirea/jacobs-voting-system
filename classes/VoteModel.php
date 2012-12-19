@@ -68,11 +68,40 @@
 
     }
 
+    protected function vote_acc_to_poll($options, $poll_id){
+      $poll_type=$this->poll_model->select('type', "WHERE id='$poll_id'");
+      $max_value=$this->poll_model->select('max_value',"WHERE id='$poll_id'");
+      $num_options=$this->poll_model->select('num_options',"WHERE id='$poll_id'");
+
+      switch($poll_type){
+        case "Binary":
+          if(!check_binary($options,$max_value,$num_options))
+            return false;
+          return true;
+        case "N-ary":
+          if(!check_nary($options,$max_value,$num_options))
+            return false;
+          return true;
+        case "Weighted":
+          if(!check_weighted($options,$max_value,$num_options))
+            return false;
+          return true;
+        case "Sorted":
+          if(!check_sorted($options,$max_value,$num_options))
+            return false;
+          return true;
+      }
+      return true;
+    }
+
     public function vote_is_valid($user_id, $poll_id, $votes){
       if($this->has_voted($user_id, $poll_id)){
         return false;
       }
       if(!$this->vote_in_time($poll_id)){
+        return false;
+      }
+      if(!vote_acc_to_poll($options,$poll_id)){
         return false;
       }
       return true;

@@ -12,7 +12,7 @@ CREATE TABLE `poll`(
   `user_id` INT NOT NULL,
   `type` VARCHAR(64) NOT NULL,
   `num_options` INT NOT NUlL,
-  `num_values` INT NOT NULL,
+  `max_value` INT NOT NULL,
   `title` VARCHAR(256) NOT NULL,
   `subtitle` VARCHAR(1024) NOT NULL,
   `timestamp` INT NOT NULL,
