@@ -1,4 +1,7 @@
 <?php
+
+  define('DEBUG', true);
+
   define('DB_USER', 'jPerson');
   define('DB_PASS', 'jacobsRulz');
   define('DB_NAME', 'VotingSystem');
