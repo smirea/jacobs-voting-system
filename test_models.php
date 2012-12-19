@@ -18,6 +18,6 @@
       //v_export(sql_to_array($t));
     }
   }
-  $dude = new test("poll","Binary","Titlu1","Sub1","12","32","1234","5678");
+  $dude = new test("poll","Binary","Titlu","Subtitlu","1","2","3","5");
   // v_export(sql_to_array($model->select('*', "where label='A'")));
 ?>

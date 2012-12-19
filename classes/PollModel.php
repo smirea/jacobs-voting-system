@@ -25,9 +25,9 @@
       	return $pollType + $votes;
 	  }
 
-	  public function create_poll($type, $title, $subtitle, $num_values, $max_file, $open_time, $close_time) {
+	  public function create_poll($type, $title, $subtitle, $num_values, $max_value, $open_time, $close_time) {
 
-	  	return $this->insert("(`user_id`, `type`, `num_values`, `title`, `subtitle`, `timestamp`, `opening_time`, `closing_time`) VALUES ('".$_SESSION['user']."', '".$type."', '".$num_values."', '".$title."', '".$subtitle."', '".time()."', '".$opening_time."', '".$closing_time."');");
+	  	return $this->insert("(`user_id`, `type`, `num_options`, `max_value`, `title`, `subtitle`, `timestamp`, `opening_time`, `closing_time`) VALUES ('".$_SESSION['user']."', '".$type."', '".$num_values."','".$max_value."' ,'".$title."', '".$subtitle."', '".time()."', '".$open_time."', '".$close_time."');");
 	  }
   }
 ?>
