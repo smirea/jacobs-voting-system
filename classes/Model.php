@@ -3,6 +3,7 @@
   class Model {
     protected $table_name;
     public $queries = array();
+    public $errors = array();
 
     /**
      * Model constructor
@@ -59,7 +60,7 @@
     }
 
     /**
-     * Describe the structure of the 
+     * Describe the structure of the
      * @return {MySQL}
      */
     public function describe () {
@@ -72,6 +73,7 @@
      */
     private function query ($query) {
       $this->queries[] = $query;
+      $this->errors[] = mysql_error();
       return mysql_query($query);
     }
 
