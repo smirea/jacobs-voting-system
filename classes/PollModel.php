@@ -11,15 +11,18 @@
 	  }
 
 	  public function get_poll_type($poll_id) {
-	     $array = sql_to_array(mysql_query("SELECT type FROM ".$this->table_name." WHERE id=".$poll_id.";"));
+	  	
+	  	 $array = sql_to_array($this->select("type","WHERE id=".$poll_id.";"));
+	     //$array = sql_to_array(mysql_query("SELECT type FROM ".$this->table_name." WHERE id=".$poll_id.";"));
 	     return $array;
 	  }
 
 	  public function get_votes($poll_id) {//get formatted bigAss json with pollType and votes
-	  	$votes = sql_to_array(mysql_query("SELECT * FROM votes WHERE poll_id=".$poll_id.";"));
+	  	
+	  	$votes = sql_to_array($this->select("*","WHERE poll_id=".$poll_id.";"));
+	  	//$votes = sql_to_array(mysql_query("SELECT * FROM votes WHERE poll_id=".$poll_id.";"));
 	  	$pollType = $this->get_poll_type();
-      return $pollType + $votes;
+        return $pollType + $votes;
 	  }
   }
-
 ?>
