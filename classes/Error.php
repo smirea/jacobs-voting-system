@@ -1,42 +1,81 @@
 <?php
 
-require_once 'classes/Model.php';
-
+/**
+ * Generic error classs
+ */
 class Error {
 
-  protected $fatal;
   protected $message;
 
-  function __construct ($message, $fatal) {
+  /**
+   * Initializes a generic error
+   * @param string $message
+   */
+  public function __construct ($message = 'An error has occured') {
     $this->message = $message;
-    $this->fatal = $fatal;
+  }
+
+  /**
+   * Converts all the error information into an array to be used in output
+   */
+  public function to_object () {
+    return array(
+      'type' => get_class($this),
+      'message' => $this->message
+    );
+  }
+
+  /**
+   * Short description of the error
+   */
+  public function __toString () {
+    return $this->message;
   }
 
 }
 
+/**
+ * Used to abstract Model Errors
+ */
 class DatabaseError extends Error {
+  protected $model;
 
-    protected $query;
-    protected $mysql;
-    protected $model;
-
-    function __construct ($model, $message) {
-      parent::__construct($message, 1);
-      $this->model = $model;
-    }
-
-    function output() {
-      //return JSON
-      //$model->query_queue[], mysql_error(),$message, 1
-    }
-
+  /**
+   * Initializes a DatabaseError
+   * @param {Mode} $model   An instance of Model on which the error occured
+   * @param string $message A custom description of the error
+   */
+  public function __construct ($model, $message = 'A database error occured') {
+    parent::__construct($message);
+    $this->model = $model;
   }
 
-function database_error($message) {
-  $error = new DatabaseError($message);
-  $error->output();
-}
+  /**
+   * @see Error::to_object()
+   */
+  public function to_object () {
+    $object = parent::to_object();
+    $object['sql'] = array();
 
-// if (!result) database_error(bsdgbdfsh, query, result); 
+    foreach ($this->model->queries as $key => $query) {
+      $object['sql'][] = array(
+        'query' => $query,
+        'error' => $this->model->errors[$key]
+      );
+    }
+
+    return $object;
+  }
+
+  /**
+   * @see Error::__toString()
+   */
+  public function __toString () {
+    $last_query = count($this->model->queries)-1;
+    return $this->message . "\n" .
+            "SQL: " . $this->model->queries[$last_query] . "\n" .
+            "Error: " . $this->model->errors[$last_query] . "\n";
+  }
+}
 
 ?>
