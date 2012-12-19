@@ -19,7 +19,7 @@
      * @return {Bool} 
      */    
     public function add_option($poll_id, $option_name) {
-      return $this->query("INSERT INTO `".$this->table_name."` (`poll_id`, `option_name`, `value`) VALUES ('$poll_id', '$option_name', '0'); ");
+      return $this->insert("` (`poll_id`, `option_name`, `value`) VALUES ('$poll_id', '$option_name', '0'); ");
       //return mysql_query("INSERT INTO `".$this->table_name."` (`poll_id`, `option_name`, `value`) VALUES ('$poll_id', '$option_name', '0'); ");
     }
 
@@ -30,7 +30,7 @@
     * @return {Int}
     * */
     public function option_value($poll_id, $option_name) {
-      $value = mysql_fetch_assoc($this->query("SELECT value FROM options WHERE poll_id='$poll_id' AND option_name='$option_name';"));
+      $value = mysql_fetch_assoc($this->select("value","WHERE poll_id='$poll_id' AND option_name='$option_name';"));
       //$value = mysql_fetch_assoc(mysql_query("SELECT value FROM options WHERE poll_id='$poll_id' AND option_name='$option_name';"));
 
       return $value['value'];
@@ -46,13 +46,13 @@
       
       $newValue = $this->option_value($poll_id, $option_name) + 1;
 
-      return $this->query("UPDATE options SET value='$newValue' WHERE poll_id='$poll_id' AND option_name = '$option_name';");
+      return $this->update("SET value='$newValue' WHERE poll_id='$poll_id' AND option_name = '$option_name';");
     }
 
     public function return_all_options($poll_id) {
 
       $result = array();
-      $array = sql_to_array($this->query("SELECT option_name from ".$this->table_name." WHERE poll_id='$poll_id';"));
+      $array = sql_to_array($this->select("option_name", " WHERE poll_id='$poll_id';"));
 
       foreach ($array as $a) {
         $result[]=$a['option_name'];  
