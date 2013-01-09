@@ -3,9 +3,12 @@
   require_once 'utils.php';
 
   class Output {
-    private static $printed = false;
+    public static $print_messages_if_errors = true;
+
     public static $errors = array();
     public static $messages = array();
+
+    private static $printed = false;
 
     /**
      * Queue an error for output
@@ -23,6 +26,10 @@
       Output::$messages[] = $message;
     }
 
+    /**
+     * Get all the errors in array format
+     * @return {Array}
+     */
     public static function get_errors () {
       $result = array();
       foreach (Output::$errors as $error) {
@@ -33,20 +40,19 @@
 
     /**
      * Terminates the script and outputs all the queued messages.
-     * @return function [description]
      */
     public static function done () {
       if (Output::$printed) {
         return;
       }
       Output::$printed = true;
-
-      if (count(Output::$errors) > 0) {
-        output_error(Output::get_errors());
-      } else {
-        json_output(Output::$messages);
+      
+      $result = array();
+      if (Output::$print_messages_if_errors || count(Output::$errors) == 0) {
+        $result['result'] = Output::$messages;
       }
-      exit();
+      $result['errors'] = Output::get_errors();
+      json_output($result);
     }
 
     /**
@@ -54,7 +60,7 @@
      * @param  {String} $name
      * @param  {Array} $arguments
      */
-    public static function __callStatic ($name, $arguments) {
+    public static function __callStatic ($name, array $arguments) {
       $final = 'final_';
       if (strpos($name, $final) === 0) {
         $method = substr($name, strlen($final));
