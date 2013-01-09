@@ -15,7 +15,7 @@
   $model->describe();
 
   Output::error(new DatabaseError($model));
-  Output::final_error(new Error('i am final and bar does not appear'));
+  Output::error(new Error('yet another error'));
   Output::error(new Error('bar'));
 
   Output::done();
