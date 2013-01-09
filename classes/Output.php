@@ -38,21 +38,25 @@
       return $result;
     }
 
-    /**
-     * Terminates the script and outputs all the queued messages.
-     */
-    public static function done () {
+    public static function get_output () {
       if (Output::$printed) {
         return;
       }
       Output::$printed = true;
-      
       $result = array();
       if (Output::$print_messages_if_errors || count(Output::$errors) == 0) {
         $result['result'] = Output::$messages;
       }
       $result['errors'] = Output::get_errors();
-      json_output($result);
+
+      return $result;
+    }
+
+    /**
+     * Terminates the script and outputs all the queued messages.
+     */
+    public static function done () {
+      json_output(Output::get_output());
     }
 
     /**
