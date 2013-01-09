@@ -59,23 +59,6 @@
       json_output(Output::get_output());
     }
 
-    /**
-     * Takes care of special final_* functions
-     * @param  {String} $name
-     * @param  {Array} $arguments
-     */
-    public static function __callStatic ($name, array $arguments) {
-      $final = 'final_';
-      if (strpos($name, $final) === 0) {
-        $method = substr($name, strlen($final));
-        if (!method_exists('Output', $method)) {
-          Output::final_error("Method `$method` does not exist");
-        }
-        call_user_func_array(array('Output', $method), $arguments);
-        Output::done();
-      }
-    }
-
   }
 
 ?>
