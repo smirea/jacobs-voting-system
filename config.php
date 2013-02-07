@@ -10,6 +10,9 @@
   define('DIR_VIEWS', 'views');
   define('DIR_CLASSES', 'classes');
 
+  define('TABLE_POLLS', 'poll');
+  define('TABLE_OPTIONS', 'options');
+
   dbConnect( DB_USER, DB_PASS, DB_NAME );
 
   session_start();
