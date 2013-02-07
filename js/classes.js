@@ -1,17 +1,37 @@
-var JQueryClass = Class.extend($.fn);
-
-var JQueryElement = JQueryClass.extend({
-  selector: '',
-  jquery: $.fn.jquery,
-  length: 0,
-  context: undefined,
-  init: function init (type) {
-    if(!(this instanceof JQueryElement)) return new JQueryElement(type);
-    this[0] = document.createElement(type);
-    this.length = 1;
-    this.data('instance', this);
-  }
-});
+var JQueryElement = Class.extend(
+  Object.create($.fn, {
+    length: {
+      configurable: true,
+      writeable: true,
+      value: 0
+    },
+    constructor: {
+      configurable: true,
+      value: JQueryElement
+    },
+    init: {
+      writeable: true,
+      configurable: true,
+      value: function init (type) {
+        if (!(this instanceof JQueryElement)) {
+          console.log('not an instance', arguments);
+          return new JQueryElement(); // fix wrong constructor invocations
+        }
+        if (this.length) { // shouldn't be set yet, so another odd invocation:
+          console.log('has a length', this, arguments);
+          var empty = Object.create(JQueryElement.prototype); // a new, but *empty* instance
+          empty.length = 0; // explicitly set length
+          return empty;
+        }
+        this.context = undefined; // not sure whether
+        this.selector = ""; // we need those two lines
+        this.length = 1; // but the length is obligatory
+        this[0] = document.createElement(type);
+        this.data('instance', this);
+      }
+    }
+  })
+);
 
 var Poll = JQueryElement.extend({
   structure: null,
