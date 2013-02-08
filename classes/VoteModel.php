@@ -16,7 +16,7 @@
      */
     function __construct($table_name) {
       parent::__construct($table_name);
-      $this->poll_model = new PollModel('poll');
+      $this->poll_model = new PollModel('poll','options');
     }
 
     /**
