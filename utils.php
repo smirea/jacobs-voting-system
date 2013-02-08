@@ -7,11 +7,8 @@
    * @param {array} $array
    * @return {bool} the result as a boolean
    */
-  function is_assoc(array $array){
-    if( !is_numeric( array_shift( array_keys( $array ) ) ) ){
-        return true;
-    }
-    return false;
+  function is_assoc (array $arr) {
+    return array_keys($arr) !== range(0, count($arr) - 1);
   }
 
   /**
@@ -103,49 +100,59 @@
 
   /**
    * Convert an object to a JSON string with indentation
-   * @param  Mixed   $in
-   * @param  integer $indent
+   * @param  {Array} $arr
    * @param  boolean $from_array
    * @return String
    */
-  function json_encode_indent ($in, $indent = 0, $from_array = false) {
-    $_myself = __FUNCTION__;
-    $indentation_string = '  ';
-    $_escape = function ($str) {
-      return preg_replace("!([\b\t\n\r\f\"\\'])!", "\\\\\\1", $str);
-    };
+  function json_encode_indent($arr) {
+    $json = json_encode($arr);
+    $result = '';
+    $pos = 0;
+    $strLen = strlen($json);
+    $indentStr = '  ';
+    $newLine = "\n";
+    $prevChar = '';
+    $outOfQuotes = true;
 
-    $out = '';
+    for ($i=0; $i<=$strLen; $i++) {
 
-    foreach ($in as $key=>$value) {
-      $out .= str_repeat($indentation_string, $indent + 1);
-      $out .= "\"".$_escape((string)$key)."\": ";
+        // Grab the next character in the string.
+        $char = substr($json, $i, 1);
 
-      if (is_object($value) || is_array($value)) {
-        $out .= "\n";
-        $out .= $_myself($value, $indent + 1);
-      } elseif (is_bool($value)) {
-        $out .= $value ? 'true' : 'false';
-      } elseif (is_null($value)) {
-        $out .= 'null';
-      } elseif (is_string($value)) {
-        $out .= "\"" . $_escape($value) ."\"";
-      } else {
-        $out .= $value;
-      }
-      $out .= ",\n";
+        // Are we inside a quoted string?
+        if ($char == '"' && $prevChar != '\\') {
+            $outOfQuotes = !$outOfQuotes;
+
+        // If this character is the end of an element,
+        // output a new line and indent the next line.
+        } else if(($char == '}' || $char == ']') && $outOfQuotes) {
+            $result .= $newLine;
+            $pos --;
+            for ($j=0; $j<$pos; $j++) {
+                $result .= $indentStr;
+            }
+        }
+
+        // Add the character to the result string.
+        $result .= $char;
+
+        // If the last character was the beginning of an element,
+        // output a new line and indent the next line.
+        if (($char == ',' || $char == '{' || $char == '[') && $outOfQuotes) {
+            $result .= $newLine;
+            if ($char == '{' || $char == '[') {
+                $pos ++;
+            }
+
+            for ($j = 0; $j < $pos; $j++) {
+                $result .= $indentStr;
+            }
+        }
+
+        $prevChar = $char;
     }
 
-    if (!empty($out)) {
-      $out = substr($out, 0, -2);
-    }
-
-    $brackets = is_assoc($in) ? array('{', '}') : array('[', ']');
-
-    $out = str_repeat($indentation_string, $indent) . $brackets[0] . "\n" . $out;
-    $out .= "\n" . str_repeat($indentation_string, $indent) . $brackets[1];
-
-    return $out;
-}
+    return $result;
+  }
 
 ?>
