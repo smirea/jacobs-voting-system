@@ -19,7 +19,7 @@
      * @return {Bool} 
      */    
     public function add_option($poll_id, $option_name) {
-      return $this->insert("` (`poll_id`, `option_name`, `value`) VALUES ('$poll_id', '$option_name', '0'); ");
+      return $this->insert("(poll_id, option_name, value) VALUES ('$poll_id', '$option_name', '0'); ");
       //return mysql_query("INSERT INTO `".$this->table_name."` (`poll_id`, `option_name`, `value`) VALUES ('$poll_id', '$option_name', '0'); ");
     }
 
