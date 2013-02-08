@@ -9,39 +9,39 @@
 
     private $option_model;
 
-	  function __construct($table_name,$optionTable_name) {
-	    parent::__construct($table_name,$optionTable_name);
+    function __construct($table_name,$optionTable_name) {
+      parent::__construct($table_name,$optionTable_name);
       $this->option_model = new OptionModel($optionTable_name);
-	  }
+    }
     /**
      * Returns the type of the poll
      * @param {Int} $poll_id is the id of the poll which type is needed
      * @return {Array} the array of the poll type
      */
-	  public function get_poll_type($poll_id) {
+    public function get_poll_type($poll_id) {
        $result = $this->select("type","WHERE id=".$poll_id.";");
        if($result === false) {
         Output::error(new DatabaseError($this));
         return null;
        }
-	  	 $array = sql_to_array($result);
-	     return $array;
-	  }
+       $array = sql_to_array($result);
+       return $array;
+    }
 
     /**
      * Returns the type of the poll
      * @param {Int} $poll_id is the id of the poll which type is needed
      * @return {Array} the array of the votes
      */
-	  public function get_votes($poll_id) {//get formatted bigAss json with pollType and votes	  	
+    public function get_votes($poll_id) {//get formatted bigAss json with pollType and votes      
       $result = $this->select("*","WHERE poll_id=".$poll_id.";");
       if($result === false) {
         Output::error(new DatabaseError($this));
         return null;
       }
-	  	$votes = sql_to_array($result);
-	  	return $votes;
-	  }
+      $votes = sql_to_array($result);
+      return $votes;
+    }
 
     /**
      * Returns the full description of any number of polls
@@ -79,7 +79,7 @@
      * @param  {String, String, String, Int, Int, Timestamp, Timestamp, Array} $poll_ids the poll_ids to retrieve. If not set, all the polls will be returned
      * @return {Bool} the arrays of a map [poll_id] => poll_description
      */
-	  public function create_poll($type, $title, $subtitle, $num_values, $max_value, $open_time, $close_time, array $options) {
+    public function create_poll($type, $title, $subtitle, $num_values, $max_value, $open_time, $close_time, array $options) {
       $result = $this->insert("(`user_id`, `type`, `num_options`, `max_value`, `title`, `subtitle`, `timestamp`, `opening_time`, `closing_time`) VALUES ('".$_SESSION['user']."', '".$type."', '".$num_values."','".$max_value."' ,'".$title."', '".$subtitle."', '".time()."', '".$open_time."', '".$close_time."');");
       if($result === true) {
         foreach($options as $key => $option) {
@@ -93,7 +93,7 @@
       }
       else return false;
       return true;
-	  }
+    }
 
   }
 ?>
