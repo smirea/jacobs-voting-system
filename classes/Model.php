@@ -19,7 +19,7 @@
      * @param {String} $query the select query string to run
      * @return {MySQL}
      */
-    protected function select ($columns, $query) {
+    protected function select ($columns, $query = '') {
       return $this->query("SELECT $columns FROM ".$this->table_name." $query");
     }
 
