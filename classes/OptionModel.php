@@ -19,8 +19,12 @@
      * @return {Bool} 
      */    
     public function add_option($poll_id, $option_name) {
-      return $this->insert("(poll_id, option_name, value) VALUES ('$poll_id', '$option_name', '0'); ");
-      //return mysql_query("INSERT INTO `".$this->table_name."` (`poll_id`, `option_name`, `value`) VALUES ('$poll_id', '$option_name', '0'); ");
+      $result = $this->insert("(poll_id, option_name, value) VALUES ('$poll_id', '$option_name', '0'); ");
+      if($result === false) {
+        Output::error(new DatabaseError($this));
+        return null;
+      }
+      return true;
     }
 
    /**
@@ -30,9 +34,12 @@
     * @return {Int}
     * */
     public function option_value($poll_id, $option_name) {
-      $value = mysql_fetch_assoc($this->select("value","WHERE poll_id='$poll_id' AND option_name='$option_name';"));
-      //$value = mysql_fetch_assoc(mysql_query("SELECT value FROM options WHERE poll_id='$poll_id' AND option_name='$option_name';"));
-
+      $result = $this->select("value","WHERE poll_id='$poll_id' AND option_name='$option_name';");
+      if($result === false) {
+        Output::error(new DatabaseError($this));
+        return null;
+      }
+      $value = mysql_fetch_assoc($result);
       return $value['value'];
     } 
 
@@ -46,13 +53,23 @@
       
       $newValue = $this->option_value($poll_id, $option_name) + 1;
 
-      return $this->update("SET value='$newValue' WHERE poll_id='$poll_id' AND option_name = '$option_name';");
+      $result = $this->update("SET value='$newValue' WHERE poll_id='$poll_id' AND option_name = '$option_name';");
+      if($result === false) {
+        Output::error(new DatabaseError($this));
+        return null;
+      }
+      return true;
     }
 
     public function return_all_options($poll_id) {
 
       $result = array();
-      $array = sql_to_array($this->select("option_name", " WHERE poll_id='$poll_id';"));
+      $response = $this->select("option_name", " WHERE poll_id='$poll_id';");
+      if($response === false) {
+        Output::error(new DatabaseError($this));
+        return null;
+      }
+      $array = sql_to_array($response);
 
       foreach ($array as $a) {
         $result[]=$a['option_name'];  
