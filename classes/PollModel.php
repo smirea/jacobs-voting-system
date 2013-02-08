@@ -13,18 +13,34 @@
 	    parent::__construct($table_name,$optionTable_name);
       $this->option_model = new OptionModel($optionTable_name);
 	  }
-
+    /**
+     * Returns the type of the poll
+     * @param {Int} $poll_id is the id of the poll which type is needed
+     * @return {Array} the array of the poll type
+     */
 	  public function get_poll_type($poll_id) {
-	  	 $array = sql_to_array($this->select("type","WHERE id=".$poll_id.";"));
-	     //$array = sql_to_array(mysql_query("SELECT type FROM ".$this->table_name." WHERE id=".$poll_id.";"));
+       $result = $this->select("type","WHERE id=".$poll_id.";");
+       if($result === false) {
+        Output::error(new DatabaseError($this));
+        return null;
+       }
+	  	 $array = sql_to_array($result);
 	     return $array;
 	  }
 
-	  public function get_votes($poll_id) {//get formatted bigAss json with pollType and votes
-	  	$votes = sql_to_array($this->select("*","WHERE poll_id=".$poll_id.";"));
-	  	//$votes = sql_to_array(mysql_query("SELECT * FROM votes WHERE poll_id=".$poll_id.";"));
-	  	$pollType = $this->get_poll_type();
-      	return $pollType + $votes;
+    /**
+     * Returns the type of the poll
+     * @param {Int} $poll_id is the id of the poll which type is needed
+     * @return {Array} the array of the votes
+     */
+	  public function get_votes($poll_id) {//get formatted bigAss json with pollType and votes	  	
+      $result = $this->select("*","WHERE poll_id=".$poll_id.";");
+      if($result === false) {
+        Output::error(new DatabaseError($this));
+        return null;
+      }
+	  	$votes = sql_to_array($result);
+	  	return $votes;
 	  }
 
     /**
@@ -41,13 +57,13 @@
       }
       if (!$query) {
         Output::error(new DatabaseError($this));
-        return false;
+        return null;
       }
       while ($row = mysql_fetch_assoc($query)) {
         $options_query = $this->option_model->select('*', "WHERE poll_id='".$row['id']."'");
         if (!$options_query) {
           Output::error(new DatabaseError($query));
-          return false;
+          return null;
         }
         $row['options'] = array();
         while ($option = mysql_fetch_assoc($options_query)) {
@@ -58,6 +74,11 @@
       return $polls;
     }
 
+    /**
+     * Creates a poll with the specified data
+     * @param  {String, String, String, Int, Int, Timestamp, Timestamp, Array} $poll_ids the poll_ids to retrieve. If not set, all the polls will be returned
+     * @return {Bool} the arrays of a map [poll_id] => poll_description
+     */
 	  public function create_poll($type, $title, $subtitle, $num_values, $max_value, $open_time, $close_time, array $options) {
       $result = $this->insert("(`user_id`, `type`, `num_options`, `max_value`, `title`, `subtitle`, `timestamp`, `opening_time`, `closing_time`) VALUES ('".$_SESSION['user']."', '".$type."', '".$num_values."','".$max_value."' ,'".$title."', '".$subtitle."', '".time()."', '".$open_time."', '".$close_time."');");
       if($result === true) {
@@ -66,7 +87,7 @@
           // var_export($this->option_model->queries);
           if($option_result === false) {
             Output::error(new DatabaseError($option_model));
-            return false;
+            return null;
           }
         }
       }
