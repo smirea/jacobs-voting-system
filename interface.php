@@ -56,6 +56,13 @@
           }
         });
 
+        $(document).ajaxSuccess(function on_ajaxSuccess (event, xhr, settings, reply) {
+          if (reply && reply.errors && reply.errors.length > 0) {
+            console.warn(reply.errors);
+          }
+          reply = reply.result;
+          console.log(arguments);
+        });
 
         $('body').on('click', '.poll input[type="reset"]', function () {
           $(this).
@@ -65,50 +72,75 @@
             css('background', '#ffccca');
         });
 
-        polls['drinkathon'] = new Poll({
-          id: 6969,
-          url: 'vote.php',
-          title: 'Availability for IT Committee Drinkathon',
-          subtitle: 'Please mark your dates of availability',
-          fields: {
-            '18.12.2012': 'checkbox',
-            '19.12.2012': 'checkbox',
-            '20.12.2012': 'checkbox',
-            '21.12.2012': 'checkbox',
-            '22.12.2012': 'checkbox'
-          }
-        });
-        polls['drinkathon'].structure.poll.find('input[type="checkbox"]').
-          on('change.color', function on_change () {
-            $(this).parent().css('background', !!$(this).attr('checked') ? 'lightgreen' : '#ffccca');
-          }).trigger('change');
+        // polls['drinkathon'] = new Poll({
+        //   id: 6969,
+        //   url: 'vote.php',
+        //   title: 'Availability for IT Committee Drinkathon',
+        //   subtitle: 'Please mark your dates of availability',
+        //   fields: {
+        //     '18.12.2012': 'checkbox',
+        //     '19.12.2012': 'checkbox',
+        //     '20.12.2012': 'checkbox',
+        //     '21.12.2012': 'checkbox',
+        //     '22.12.2012': 'checkbox'
+        //   }
+        // });
+        // polls['drinkathon'].structure.poll.find('input[type="checkbox"]').
+        //   on('change.color', function on_change () {
+        //     $(this).parent().css('background', !!$(this).attr('checked') ? 'lightgreen' : '#ffccca');
+        //   }).trigger('change');
 
 
-        var end_of_the_world_fields = {};
-        var days = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split(' ');
-        for (var i=0; i<days.length; ++i) {
-          end_of_the_world_fields[days[i]] = new RadioInput('options[day]', {value:days[i]});
-        }
-        polls['armageddon'] = new Poll({
-          id: 6900,
-          url: 'vote.php',
-          title: 'End of the World',
-          subtitle: 'On which day do you think the end of the world will happen?',
-          fields: end_of_the_world_fields
-        });
-        polls['armageddon'].structure.poll.find('input[type="radio"]').
-          on('change.color', function on_change () {
-            polls['armageddon'].structure.poll.find('input[name="'+this.name+'"]').parent().css('background', '#ffccca');
-            if ($(this).attr('checked')) {
-              $(this).parent().css('background', 'lightgreen');
+        // var end_of_the_world_fields = {};
+        // var days = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split(' ');
+        // for (var i=0; i<days.length; ++i) {
+        //   end_of_the_world_fields[days[i]] = new RadioInput('options[day]', {value:days[i]});
+        // }
+        // polls['armageddon'] = new Poll({
+        //   id: 6900,
+        //   url: 'vote.php',
+        //   title: 'End of the World',
+        //   subtitle: 'On which day do you think the end of the world will happen?',
+        //   fields: end_of_the_world_fields
+        // });
+        // polls['armageddon'].structure.poll.find('input[type="radio"]').
+        //   on('change.color', function on_change () {
+        //     polls['armageddon'].structure.poll.find('input[name="'+this.name+'"]').parent().css('background', '#ffccca');
+        //     if ($(this).attr('checked')) {
+        //       $(this).parent().css('background', 'lightgreen');
+        //     }
+        //   }).trigger('change');
+
+
+        $.get('index.php', {q: 'get_polls.php'}, function (result) {
+          result = result.result[0];
+          for (var id in result) {
+            var fields = {};
+            for (var id in result.options) {
+              fields[result.options[id].option_name] = 'checkbox';
             }
-          }).trigger('change');
+            polls[result[id].id] = new Poll({
+              id: result[id].id,
+              url: 'vote.php',
+              title: result[id].title,
+              subtitle: result[id].subtitle,
+              fields: fields
+            });
+          }
+        }).error(function () {
+          throw arguments[2];
+        });
 
+        console.log(polls);
 
-        $('body').append(
-          polls['drinkathon'],
-          polls['armageddon']
-        );
+        for (var key in polls) {
+          $('body').append(polls[key]);
+        }
+
+        // $('body').append(
+        //   polls['drinkathon'],
+        //   polls['armageddon']
+        // );
 
         $('form').on('submit.vote', function _on_vote (event) {
           var form = $(this);
