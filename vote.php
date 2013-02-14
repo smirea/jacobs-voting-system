@@ -8,6 +8,8 @@
   $voteModel = new VoteModel('votes');
   $optionModel = new OptionModel('options');
 
+  e_assert_isset($_GET, 'id,options');
+
   $pid =  $_GET["id"];
   $options = $_GET["options"];
   $uid = rand(); //$session['user_id'];
