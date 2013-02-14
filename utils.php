@@ -16,7 +16,7 @@
    * @warning This function terminates the execution (runs exit())
    * @param {array} $arr the given array
    */
-  function json_output( array $arr ){
+  function json_output ( array $arr ) {
     if( !headers_sent() ){
       header('Cache-Control: no-cache, must-revalidate');
       header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
@@ -31,7 +31,7 @@
    * @warning This function terminates the execution (runs exit())
    * @param {string} $message the message to output
    */
-  function output_error( $message ){
+  function output_error ( $message ) {
     json_output( array( 'error' => $message ) );
   }
 
@@ -41,7 +41,7 @@
    * @param {bool} $bool
    * @param {string} $message what to output if the first param is false
    */
-  function e_assert( $bool, $message = "Assertion failed" ){
+  function e_assert ( $bool, $message = "Assertion failed" ) {
     if( !$bool ){
       output_error( $message );
     }
@@ -53,7 +53,7 @@
    * @param {string|array} $keys either a associative array with 'keys_to_check'=>'message_to_output'
    *                              or a comma-separated string of keys (in which case a default message will be used )
    */
-  function e_assert_isset( array $arr, $keys ){
+  function e_assert_isset ( array $arr, $keys ) {
     if( is_string( $keys ) ){
       $keys = array_map( 'trim', explode(',',$keys) );
     }
@@ -66,7 +66,7 @@
     }
   }
 
-  function sql_to_json_output( $q ){
+  function sql_to_json_output ( $q ) {
     if( $q ){
       json_output( sql_to_array( $q ) );
     } else {
@@ -81,7 +81,7 @@
    * @param {} $key
    * @return a list of associative arrays with the result
    */
-  function sql_to_array ( $sql, $key = null ){
+  function sql_to_array ( $sql, $key = null ) {
     if( $sql ){
       $a = array();
       while( $r = mysql_fetch_assoc( $sql ) ){
@@ -104,7 +104,7 @@
    * @param  boolean $from_array
    * @return String
    */
-  function json_encode_indent($arr) {
+  function json_encode_indent ($arr) {
     $json = json_encode($arr);
     $result = '';
     $pos = 0;
