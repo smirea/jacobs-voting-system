@@ -1,6 +1,6 @@
 <?php
 
-  define('DEBUG', true);
+  define('DEBUG', false);
 
   define('DB_USER', 'jPerson');
   define('DB_PASS', 'jacobsRulz');
